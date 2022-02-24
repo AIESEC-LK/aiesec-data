@@ -1,0 +1,5 @@
+node_modules/
+./config.js
+config.js
+bq_service_account.json
+./bq_service_account.json
