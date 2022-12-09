@@ -6,6 +6,7 @@ const ObjectsToCsv = require('objects-to-csv');
 const opportunities = require("./opportunities");
 const analytics = require("./analytics");
 const notifications = require("./notifications");
+const people = require("./people");
 
 exports.getGTOpportunities = functions
     .runWith({
@@ -56,13 +57,29 @@ exports.schedulednotifyLastWeek = functions.pubsub.schedule('30 9 * * 1')
         response.send(results);
     });
 
+exports.getPeople = functions
+    .runWith({
+        timeoutSeconds: 300,
+        memory: "1GB",
+    })
+    .https.onRequest(async (request, response) => {
+        const people_list = await people.getPeople(request.query.start, request.query.end);
+        response.send("People fetched: " + people_list.length);
+    });
+
+exports.getPeopleDaily = functions.pubsub.schedule('30 06 * * *')
+    .timeZone('Asia/Calcutta')
+    .onRun(async (context) => {
+        let yesterday = getYesterday();
+        await people.getPeople(yesterday, yesterday);
+    });
+
 async function notifyLastWeekInternal() {
     const start = getLastWeek();
     const end = getYesterday();
     const results = await analytics.getAnalyticsForDateRangeNoPush(start, end);
     const entities = ["ASL", "CC", "CN", "CS", "Kandy", "USJ", "SLIIT", "Ruhuna", "NSBM"];
     const products = ["iGV", "iGTa", "iGTe", "oGV", "oGTa", "oGTe"];
-
 
     for (let entity of entities) {
         for (let product of products) {

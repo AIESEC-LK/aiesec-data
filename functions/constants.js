@@ -28,6 +28,15 @@ exports.PRODUCTS = {
     GTe: [9],
 }
 
+exports.PRODUCTS_T = {
+    1: "GV",
+    2: "GTa",
+    5: "GTa",
+    7: "GV",
+    8: "GTa",
+    9: "GTe"
+}
+
 exports.TYPES = {
     INCOMING: "i",
     OUTGOING: "o"
